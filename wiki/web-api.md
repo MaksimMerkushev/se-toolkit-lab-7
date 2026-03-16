@@ -40,7 +40,7 @@ To form a complete request URL, append an endpoint path to the base URL:
 
 ## API key
 
-An API key is a secret value used to [authenticate](./http-auth.md#http-authentication) a client making requests to a [web API](#what-is-a-web-api).
+An API key is a secret value used to [authenticate](./http-auth.md#http-authentication) a [client](./web-infrastructure.md#web-client) making requests to a [web API](#what-is-a-web-api).
 
 ### `<api-key>` placeholder
 
