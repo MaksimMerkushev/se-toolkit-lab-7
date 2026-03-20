@@ -26,7 +26,8 @@ async def run_telegram_bot():
     @dp.message()
     async def universal_handler(message: types.Message):
         text = message.text or ""
-        response = route_command(text)
+        # ДОБАВИТЬ AWAIT:
+        response = await route_command(text)
         await message.answer(response)
 
     print("Bot is starting polling (IPv4 + NoSSL mode)...")
@@ -38,8 +39,8 @@ async def run_telegram_bot():
     finally:
         await session.close()
 
-def run_test_mode(command: str):
-    response = route_command(command)
+async def run_test_mode(command: str):
+    response = await route_command(command)
     print(response)
     sys.exit(0)
 
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.test:
-        run_test_mode(args.test)
+        # ЗАПУСТИТЬ ЧЕРЕЗ ASYNCIO:
+        asyncio.run(run_test_mode(args.test))
     else:
         asyncio.run(run_telegram_bot())
