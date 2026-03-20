@@ -1,0 +1,146 @@
+nohup: ignoring input
+Bot is starting polling...
+Traceback (most recent call last):
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/python_socks/async_/asyncio/v2/_proxy.py", line 97, in _connect
+    stream = await connect_tcp(
+             ^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/python_socks/async_/asyncio/v2/_connect.py", line 16, in connect_tcp
+    reader, writer = await asyncio.open_connection(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/streams.py", line 48, in open_connection
+    transport, _ = await loop.create_connection(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        lambda: protocol, host, port, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 1119, in create_connection
+    infos = await self._ensure_resolved(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        (host, port), family=family,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        type=socket.SOCK_STREAM, proto=proto, flags=flags, loop=self)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 1505, in _ensure_resolved
+    return await loop.getaddrinfo(host, port, family=family, type=type,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  proto=proto, flags=flags)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 936, in getaddrinfo
+    return await self.run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        None, getaddr_func, host, port, family, type, proto, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/concurrent/futures/thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/concurrent/futures/thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/socket.py", line 983, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno -2] Name or service not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp_socks/connector.py", line 72, in _wrap_create_connection
+    return await self._connect_via_proxy(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp_socks/connector.py", line 135, in _connect_via_proxy
+    stream = await proxy.connect(
+             ^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/python_socks/async_/asyncio/v2/_proxy.py", line 79, in connect
+    return await self._connect(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/python_socks/async_/asyncio/v2/_proxy.py", line 104, in _connect
+    raise ProxyConnectionError(
+    ...<3 lines>...
+    ) from e
+python_socks._errors.ProxyConnectionError: [Errno -2] Couldn't connect to proxy proxy.innopolis.university:3128 [Name or service not known]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/se-toolkit-lab-7/bot/bot.py", line 46, in <module>
+    asyncio.run(run_telegram_bot())
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.14.2-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/root/se-toolkit-lab-7/bot/bot.py", line 30, in run_telegram_bot
+    await dp.start_polling(bot)
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 621, in start_polling
+    await asyncio.gather(*done)
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/dispatcher/dispatcher.py", line 377, in _polling
+    user: User = await bot.me()
+                 ^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 362, in me
+    self._me = await self.get_me()
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 1798, in get_me
+    return await self(call, request_timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/client/bot.py", line 488, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/client/session/base.py", line 259, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiogram/client/session/aiohttp.py", line 167, in make_request
+    async with session.post(
+               ~~~~~~~~~~~~^
+        url,
+        ^^^^
+        data=form,
+        ^^^^^^^^^^
+        timeout=self.timeout if timeout is None else timeout,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ) as resp:
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        req, traces=traces, timeout=real_timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp/connector.py", line 1580, in _create_direct_connection
+    transp, proto = await self._wrap_create_connection(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/root/se-toolkit-lab-7/bot/.venv/lib/python3.14/site-packages/aiohttp_socks/connector.py", line 79, in _wrap_create_connection
+    raise ProxyConnectionError(str(e)) from e
+aiohttp_socks._errors.ProxyConnectionError: [Errno -2] Couldn't connect to proxy proxy.innopolis.university:3128 [Name or service not known]
