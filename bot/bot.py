@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.client.session.aiohttp import AiohttpSession
 
 from config import BOT_TOKEN
-from handlers.base import route_command
+from handlers.common.base import route_command
 
 async def run_telegram_bot():
     token = BOT_TOKEN.strip()
