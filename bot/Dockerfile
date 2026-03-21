@@ -16,3 +16,4 @@ COPY . .
 
 # Запускаем бота через uv
 CMD ["uv", "run", "bot.py"]
+# Task 2 done
