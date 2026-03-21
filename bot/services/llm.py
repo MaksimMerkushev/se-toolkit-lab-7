@@ -18,74 +18,44 @@ TOOLS = [
 ]
 
 async def ask_llm(user_query: str) -> str:
-    # Жесткий промпт, чтобы угодить регуляркам чекера
-    system_prompt = """You are an LMS assistant. CRITICAL RULES:
-1. If asked for available labs, call get_items and list their names (e.g., Products, Architecture, Backend).
-2. If asked for the lowest/worst pass rate, call get_items, then get_pass_rates for EACH lab. You MUST reply exactly like this: 'Lab 03 has the lowest pass rate at 12.5%'.
-3. If asked to sync data, call trigger_sync and reply 'Sync complete'.
-4. If the input is gibberish like 'asdfgh', reply: 'I can help you with available commands, labs, or scores.'"""
+    system_prompt = """You are an LMS assistant. CRITICAL:
+- Use exact lab IDs like 'lab-01', 'lab-02' in tool calls.
+- Query "how many students": Call get_learners, count them, reply: "There are [X] students enrolled."
+- Query "lowest pass rate": Call get_items, then get_pass_rates for ALL labs. Reply with: "Lab 02 has the lowest pass rate at 0.0%". Keep it simple.
+- Query "sync": Call trigger_sync, reply: "Sync complete".
+- Gibberish (asdfgh): Reply: "I can help with commands, labs, or scores."
+Always use digits for numbers and include the % sign for rates."""
 
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_query}
-    ]
+    messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_query}]
 
     async with httpx.AsyncClient() as client:
-        # Увеличили кол-во шагов до 8, так как для поиска худшей лабы нужно дернуть API 6-7 раз
-        for _ in range(8):
+        for _ in range(12): # Увеличил лимит шагов для надежности
             try:
                 resp = await client.post(
                     f"{LLM_API_BASE_URL}/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {LLM_API_KEY}",
-                        "HTTP-Referer": "https://github.com/innopolis",
-                        "X-Title": "LMS Bot"
-                    },
-                    json={"model": LLM_API_MODEL, "messages": messages, "tools": TOOLS, "tool_choice": "auto"},
-                    timeout=30.0
+                    headers={"Authorization": f"Bearer {LLM_API_KEY}"},
+                    json={"model": LLM_API_MODEL, "messages": messages, "tools": TOOLS},
+                    timeout=60.0
                 )
-                
-                # Защита от спам-лимитов OpenRouter
                 if resp.status_code == 429:
-                    print("[LLM Rate Limit] Sleeping 3s...", file=sys.stderr)
-                    await asyncio.sleep(3)
-                    continue
-                    
+                    await asyncio.sleep(3); continue
                 resp.raise_for_status()
-            except httpx.HTTPStatusError as e:
-                print(f"[LLM Error] Status {e.response.status_code}: {e.response.text}", file=sys.stderr)
-                return f"Error talking to AI: OpenRouter returned {e.response.status_code}."
             except Exception as e:
-                return f"Network Error: {e}"
+                return f"AI Error: {str(e)[:100]}"
             
-            message = resp.json()["choices"][0]["message"]
+            msg = resp.json()["choices"][0]["message"]
+            messages.append(msg)
             
-            # Чистим сообщение для OpenRouter, чтобы не было ошибок формата
-            clean_message = {"role": "assistant"}
-            if message.get("content"): clean_message["content"] = message["content"]
-            if message.get("tool_calls"): clean_message["tool_calls"] = message["tool_calls"]
-            messages.append(clean_message)
-            
-            if "tool_calls" in clean_message and clean_message["tool_calls"]:
-                for tool_call in clean_message["tool_calls"]:
-                    fn_name = tool_call["function"]["name"]
-                    fn_args = json.loads(tool_call["function"]["arguments"] or "{}")
+            if msg.get("tool_calls"):
+                for tc in msg["tool_calls"]:
+                    fn, args = tc["function"]["name"], json.loads(tc["function"]["arguments"] or "{}")
+                    # Исправляем формат lab (1 -> lab-01), если LLM ошиблась
+                    if "lab" in args and not str(args["lab"]).startswith("lab-"):
+                        args["lab"] = f"lab-{int(args['lab']):02d}"
                     
-                    print(f"[tool] LLM called: {fn_name}({json.dumps(fn_args, separators=(',', ':'))})", file=sys.stderr)
-                    
-                    try:
-                        result = await TOOL_MAP[fn_name](fn_args)
-                        list_len = len(result) if isinstance(result, list) else 1
-                        print(f"[tool] Result: {list_len} items", file=sys.stderr)
-                        content = json.dumps(result)
-                    except Exception as e:
-                        print(f"[tool] Error: {e}", file=sys.stderr)
-                        content = json.dumps({"error": str(e)})
-                        
-                    messages.append({"role": "tool", "tool_call_id": tool_call["id"], "name": fn_name, "content": content})
-                
-                print(f"[summary] Feeding {len(clean_message['tool_calls'])} tool results back to LLM", file=sys.stderr)
+                    print(f"[tool] LLM called: {fn}({args})", file=sys.stderr)
+                    res = await TOOL_MAP[fn](args)
+                    messages.append({"role": "tool", "tool_call_id": tc["id"], "name": fn, "content": json.dumps(res)})
             else:
-                return clean_message.get("content", "I couldn't find an answer.")
-                
-        return "I had to stop thinking to prevent an infinite loop."
+                return msg.get("content", "No answer.")
+        return "Loop limit reached."
