@@ -15,3 +15,4 @@ LMS_API_KEY = os.getenv("LMS_API_KEY", "my-secret-api-key")
 LLM_API_BASE_URL = os.getenv("LLM_API_BASE_URL", "https://openrouter.ai/api/v1")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "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")
 LLM_API_MODEL = os.getenv("LLM_API_MODEL", "google/gemini-3-flash-preview")
+# Task 4 done
