@@ -54,3 +54,4 @@ if __name__ == "__main__":
         asyncio.run(run_test_mode(args.test))
     else:
         asyncio.run(run_telegram_bot())
+# Workflow verification for Task 1
